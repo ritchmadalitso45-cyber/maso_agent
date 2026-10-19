@@ -221,6 +221,7 @@
 }
 
 /* ── Checklist bubble ───────────────────────────────────────── */
+<<<<<<< HEAD
 /* Compact result card */
 .message-wrap--result { max-width: calc(100% - 40px); width: 100%; }
 .bubble--result { padding: 0; width: 100%; overflow: hidden; border-radius: 20px 20px 20px 5px; box-shadow: 0 5px 20px #24213a09; }
@@ -264,6 +265,115 @@
 .result-action p { font-size: 12px; }
 .result-card .result-caption { font-size: 10px; }
 
+=======
+.checklist-bubble {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 220px;
+}
+
+.risk-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  width: fit-content;
+}
+
+.risk-safe {
+  background: #dcfce7;
+  color: #15803d;
+}
+.risk-caution {
+  background: #fef9c3;
+  color: #a16207;
+}
+.risk-danger {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+.risk-neutral {
+  background: #f0f0f8;
+  color: #6b6b8a;
+}
+
+.risk-icon {
+  font-size: 12px;
+}
+
+.checklist-summary {
+  margin: 0;
+  font-size: 13px;
+  color: #2d2d3f;
+  line-height: 1.5;
+}
+
+.check-section {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.check-section-title {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #9090aa;
+}
+
+.check-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+
+.check-icon {
+  flex-shrink: 0;
+  font-size: 11px;
+  margin-top: 1px;
+  font-weight: 700;
+}
+
+.check-pass {
+  color: #2d6a4f;
+}
+.check-pass .check-icon {
+  color: #22c55e;
+}
+
+.check-fail {
+  color: #7f1d1d;
+}
+.check-fail .check-icon {
+  color: #ef4444;
+}
+
+.check-detail {
+  font-weight: 400;
+  color: #9b4040;
+  font-size: 11.5px;
+}
+
+/* ── Input bar ──────────────────────────────────────────────── */
+>>>>>>> origin/main
 .input-bar {
   background: #fff;
   border-top: 1px solid #ececf3;
@@ -339,6 +449,7 @@
   cursor: not-allowed;
   box-shadow: none;
 }
+<<<<<<< HEAD
 
 @media (max-width: 480px) {
   body { padding: 0; }
@@ -370,3 +481,5 @@
 
 .result-checked { list-style: none; padding: 0; margin: 12px 0 0; display: flex; flex-direction: column; gap: 5px; font-size: 11px; color: #5e566c; }
 .result-checked span { color: #66508d; margin-right: 4px; }
+=======
+>>>>>>> origin/main

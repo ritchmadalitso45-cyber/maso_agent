@@ -1,9 +1,14 @@
 import { useState, useRef, useEffect } from 'react'
 import './App.css'
+<<<<<<< HEAD
 import { presentResult } from './resultPresentation'
 import { createAnalysisRequest, validateAttachment } from './analysisRequest'
 
 // ── Maso avatar icon (shield + robot face) ────────────────────────────────
+=======
+
+// Maso avatar icon (shield + robot face) 
+>>>>>>> origin/main
 function MasoAvatar({ size = 36 }) {
   return (
     <div className="maso-avatar" style={{ width: size, height: size }}>
@@ -22,11 +27,16 @@ function MasoAvatar({ size = 36 }) {
   )
 }
 
+<<<<<<< HEAD
 // ── Timestamp helper ──────────────────────────────────────────────────────
+=======
+// Timestamp helper 
+>>>>>>> origin/main
 function formatTime(date) {
   return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 }
 
+<<<<<<< HEAD
 // Concise guidance follows the server verdict; it never recalculates risk.
 function ChecklistBubble({ result }) {
   const presentation = presentResult(result)
@@ -56,13 +66,185 @@ function ChecklistBubble({ result }) {
 }
 
 // ── Message bubble ─────────────────────────────────────────────────────────
+=======
+//  Safety analysis logic 
+function analyzeInput(text) {
+  const lower = text.toLowerCase().trim()
+
+  // Extract URLs
+  const urlRegex = /https?:\/\/[^\s]+|www\.[^\s]+/gi
+  const urls = text.match(urlRegex) || []
+
+  // Suspicious keyword signals
+  const phishingKeywords = [
+    'verify', 'confirm', 'suspended', 'urgent', 'click here', 'account',
+    'password', 'login', 'signin', 'paypal', 'bank', 'prize', 'winner',
+    'congratulations', 'free', 'limited time', 'act now', 'claim',
+    'update your', 'billing', 'unusual activity', 'locked',
+  ]
+  const matchedKeywords = phishingKeywords.filter(k => lower.includes(k))
+
+  const suspiciousPatterns = {
+    shortenedUrl: /bit\.ly|tinyurl|t\.co|goo\.gl|ow\.ly|rb\.gy|is\.gd/i.test(text),
+    ipAddress: /https?:\/\/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/i.test(text),
+    manySubdomains: /([a-z0-9-]+\.){3,}[a-z]{2,}/i.test(text),
+    atSymbolInUrl: urls.some(u => u.includes('@')),
+    lookalikeDomain: /paypa1|g00gle|arnazon|micros0ft|faceb00k|inst4gram/i.test(text),
+    qrMention: /qr\s*code|scan\s*(this|the|to)/i.test(lower),
+    hyphenDomain: /[a-z]+-[a-z]+-[a-z]+\.(com|net|org|io)/i.test(text),
+    noHttps: urls.length > 0 && urls.some(u => u.startsWith('http://')),
+  }
+
+  const flags = Object.entries(suspiciousPatterns)
+    .filter(([, v]) => v)
+    .map(([k]) => k)
+
+  const totalSignals = flags.length + Math.min(matchedKeywords.length, 3)
+
+  let riskLevel, riskLabel, riskColor
+  if (totalSignals === 0 && urls.length === 0) {
+    riskLevel = 'unknown'
+    riskLabel = 'No links detected'
+    riskColor = 'neutral'
+  } else if (totalSignals === 0) {
+    riskLevel = 'safe'
+    riskLabel = 'Looks Clean'
+    riskColor = 'safe'
+  } else if (totalSignals <= 2) {
+    riskLevel = 'caution'
+    riskLabel = 'Worth a second look'
+    riskColor = 'caution'
+  } else {
+    riskLevel = 'danger'
+    riskLabel = 'Suspicious — be careful'
+    riskColor = 'danger'
+  }
+
+  // Build checklist items
+  const checklist = [
+    {
+      label: 'HTTPS encrypted connection',
+      pass: urls.length === 0 || urls.every(u => u.startsWith('https://')),
+      detail: suspiciousPatterns.noHttps ? 'Uses plain HTTP — not encrypted' : null,
+    },
+    {
+      label: 'No URL shortener detected',
+      pass: !suspiciousPatterns.shortenedUrl,
+      detail: suspiciousPatterns.shortenedUrl ? 'Shortened link hides the real destination' : null,
+    },
+    {
+      label: 'No IP address used as domain',
+      pass: !suspiciousPatterns.ipAddress,
+      detail: suspiciousPatterns.ipAddress ? 'Legitimate sites use domain names, not raw IPs' : null,
+    },
+    {
+      label: 'No lookalike domain tricks',
+      pass: !suspiciousPatterns.lookalikeDomain,
+      detail: suspiciousPatterns.lookalikeDomain ? 'Domain mimics a trusted brand with character swaps' : null,
+    },
+    {
+      label: 'No suspicious @ in URL',
+      pass: !suspiciousPatterns.atSymbolInUrl,
+      detail: suspiciousPatterns.atSymbolInUrl ? '@  in a URL redirects to a different host' : null,
+    },
+    {
+      label: 'No urgency / scare language',
+      pass: matchedKeywords.length === 0,
+      detail: matchedKeywords.length > 0 ? `Pressure words found: ${matchedKeywords.slice(0, 3).join(', ')}` : null,
+    },
+    {
+      label: 'No QR-code redirect trick',
+      pass: !suspiciousPatterns.qrMention,
+      detail: suspiciousPatterns.qrMention ? 'QR codes can hide phishing URLs' : null,
+    },
+  ]
+
+  // Summary message
+  let summary = ''
+  if (riskLevel === 'unknown') {
+    summary = "I didn't spot any links in that message. If you have a URL or suspicious text to check, paste it in and I'll take a look."
+  } else if (riskLevel === 'safe') {
+    summary = `Everything checks out on this one. The link looks clean — no shortened URLs, no dodgy domain tricks, and no pressure language. Still worth being cautious if it arrived out of nowhere.`
+  } else if (riskLevel === 'caution') {
+    summary = `A couple of things caught my eye. It's not necessarily dangerous, but I'd double-check before clicking or sharing any personal info. See the checklist below.`
+  } else {
+    summary = `This one raises several red flags. I'd strongly recommend not clicking any links or entering any credentials. Here's what I found:`
+  }
+
+  return { riskLevel, riskLabel, riskColor, checklist, summary, urls, flags }
+}
+
+// Check result bubble 
+function ChecklistBubble({ result }) {
+  const failedItems = result.checklist.filter(i => !i.pass)
+  const passedItems = result.checklist.filter(i => i.pass)
+
+  return (
+    <div className="checklist-bubble">
+      {/* Risk badge */}
+      <div className={`risk-badge risk-${result.riskColor}`}>
+        <span className="risk-icon" aria-hidden="true">
+          {result.riskColor === 'safe' && '✓'}
+          {result.riskColor === 'caution' && '⚠'}
+          {result.riskColor === 'danger' && '✕'}
+          {result.riskColor === 'neutral' && '•'}
+        </span>
+        <span className="risk-label">{result.riskLabel}</span>
+      </div>
+
+      {/* Summary */}
+      <p className="checklist-summary">{result.summary}</p>
+
+      {/* Failed checks */}
+      {failedItems.length > 0 && (
+        <div className="check-section">
+          <p className="check-section-title">Issues found</p>
+          <ul className="check-list">
+            {failedItems.map((item, i) => (
+              <li key={i} className="check-item check-fail">
+                <span className="check-icon" aria-hidden="true">✕</span>
+                <span>
+                  <strong>{item.label}</strong>
+                  {item.detail && <span className="check-detail"> — {item.detail}</span>}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Passed checks */}
+      {passedItems.length > 0 && (
+        <div className="check-section">
+          <p className="check-section-title">Passed checks</p>
+          <ul className="check-list">
+            {passedItems.map((item, i) => (
+              <li key={i} className="check-item check-pass">
+                <span className="check-icon" aria-hidden="true">✓</span>
+                <span>{item.label}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// Message bubble 
+>>>>>>> origin/main
 function Message({ msg }) {
   const isUser = msg.role === 'user'
   return (
     <div className={`message-row ${isUser ? 'message-row--user' : 'message-row--bot'}`}>
       {!isUser && <MasoAvatar size={32} />}
+<<<<<<< HEAD
       <div className={`message-wrap ${msg.checkResult ? 'message-wrap--result' : ''}`}>
         <div className={`bubble ${isUser ? 'bubble--user' : 'bubble--bot'} ${msg.checkResult ? 'bubble--result' : ''}`}>
+=======
+      <div className="message-wrap">
+        <div className={`bubble ${isUser ? 'bubble--user' : 'bubble--bot'}`}>
+>>>>>>> origin/main
           {msg.checkResult ? (
             <ChecklistBubble result={msg.checkResult} />
           ) : (
@@ -75,7 +257,11 @@ function Message({ msg }) {
   )
 }
 
+<<<<<<< HEAD
 // ── Typing indicator ──────────────────────────────────────────────────────
+=======
+// Typing indicator 
+>>>>>>> origin/main
 function TypingIndicator() {
   return (
     <div className="message-row message-row--bot">
@@ -89,7 +275,11 @@ function TypingIndicator() {
   )
 }
 
+<<<<<<< HEAD
 // ── Main App ──────────────────────────────────────────────────────────────
+=======
+//  Main App 
+>>>>>>> origin/main
 const WELCOME_MESSAGES = [
   {
     id: 'w1',
@@ -100,7 +290,11 @@ const WELCOME_MESSAGES = [
   {
     id: 'w2',
     role: 'bot',
+<<<<<<< HEAD
     text: 'Paste a link or a message you received. Get a quick scam check and what to do next.',
+=======
+    text: 'Paste any link or suspicious message and I\'ll check it for phishing, spoofed domains, URL tricks, and more.',
+>>>>>>> origin/main
     time: new Date(),
   },
 ]
@@ -108,11 +302,14 @@ const WELCOME_MESSAGES = [
 export default function App() {
   const [messages, setMessages] = useState(WELCOME_MESSAGES)
   const [input, setInput] = useState('')
+<<<<<<< HEAD
   const [attachment, setAttachment] = useState(null)
   const [attachmentError, setAttachmentError] = useState('')
   const [checkThreatFeed, setCheckThreatFeed] = useState(true)
   const fileRef = useRef(null)
   const sendingRef = useRef(false)
+=======
+>>>>>>> origin/main
   const [isTyping, setIsTyping] = useState(false)
   const bottomRef = useRef(null)
   const inputRef = useRef(null)
@@ -122,21 +319,32 @@ export default function App() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, isTyping])
 
+<<<<<<< HEAD
   const handleSend = async () => {
     const trimmed = input.trim()
     if ((!trimmed && !attachment) || sendingRef.current) return
     sendingRef.current = true
     const selectedFile = attachment
     const kind = selectedFile ? validateAttachment(selectedFile) : 'text'
+=======
+  const handleSend = () => {
+    const trimmed = input.trim()
+    if (!trimmed) return
+>>>>>>> origin/main
 
     const userMsg = {
       id: `u-${Date.now()}`,
       role: 'user',
+<<<<<<< HEAD
       text: selectedFile ? `${kind === 'email' ? 'Email' : 'QR image'}: ${selectedFile.name}` : trimmed,
+=======
+      text: trimmed,
+>>>>>>> origin/main
       time: new Date(),
     }
 
     setMessages(prev => [...prev, userMsg])
+<<<<<<< HEAD
     if (!selectedFile) setInput('')
     setAttachment(null)
     setAttachmentError('')
@@ -186,6 +394,24 @@ export default function App() {
     } catch (error) {
       setAttachmentError(error.message)
     }
+=======
+    setInput('')
+    setIsTyping(true)
+
+    // Simulate analysis delay for realism
+    setTimeout(() => {
+      const result = analyzeInput(trimmed)
+      const botMsg = {
+        id: `b-${Date.now()}`,
+        role: 'bot',
+        checkResult: result,
+        text: '',
+        time: new Date(),
+      }
+      setIsTyping(false)
+      setMessages(prev => [...prev, botMsg])
+    }, 1200)
+>>>>>>> origin/main
   }
 
   const handleKeyDown = (e) => {
@@ -237,6 +463,7 @@ export default function App() {
         <div ref={bottomRef} />
       </div>
 
+<<<<<<< HEAD
       <label className="deeper-check"><input type="checkbox" checked={checkThreatFeed} disabled={isTyping} onChange={event => setCheckThreatFeed(event.target.checked)} />
         <span>Check OpenPhish scam reports<small>Checks links locally against a feed updated every 12 hours.</small></span>
       </label>
@@ -250,6 +477,11 @@ export default function App() {
       {/* Input bar */}
       <div className="input-bar">
         <button type="button" className="input-attach-btn" aria-label="Attach email or QR image" title="Attach an email (.eml) or QR image · up to 2 MB" disabled={isTyping} onClick={() => fileRef.current?.click()}>
+=======
+      {/* Input bar */}
+      <div className="input-bar">
+        <button className="input-attach-btn" aria-label="Attach file">
+>>>>>>> origin/main
           <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd"/></svg>
         </button>
 
@@ -259,10 +491,15 @@ export default function App() {
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
+<<<<<<< HEAD
           placeholder={attachment ? 'File ready — press Send to check' : 'Paste a link or message…'}
           disabled={Boolean(attachment) || isTyping}
           rows={1}
           maxLength={20000}
+=======
+          placeholder="Paste a link or message…"
+          rows={1}
+>>>>>>> origin/main
           aria-label="Type your message"
         />
 
@@ -270,7 +507,11 @@ export default function App() {
           className="send-btn"
           onClick={handleSend}
           aria-label="Send message"
+<<<<<<< HEAD
           disabled={(!input.trim() && !attachment) || isTyping}
+=======
+          disabled={!input.trim()}
+>>>>>>> origin/main
         >
           <svg width="18" height="18" viewBox="0 0 18 18" fill="white"><path d="M16.5 9L2 2l2.5 7L2 16l14.5-7z"/></svg>
         </button>

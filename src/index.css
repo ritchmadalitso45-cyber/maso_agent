@@ -40,7 +40,11 @@ body {
   justify-content: center;
 }
 
+<<<<<<< HEAD
 /* ── Typography resets (don't bleed into chat bubble styles) ── */
+=======
+/* ── Typography resets  ── */
+>>>>>>> origin/main
 h1, h2, h3, h4, h5, h6 {
   margin: 0;
 }
