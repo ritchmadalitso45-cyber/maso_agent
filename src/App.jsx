@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import './App.css'
 
-// ── Maso avatar icon (shield + robot face) ────────────────────────────────
+// Maso avatar icon (shield + robot face) 
 function MasoAvatar({ size = 36 }) {
   return (
     <div className="maso-avatar" style={{ width: size, height: size }}>
@@ -20,12 +20,12 @@ function MasoAvatar({ size = 36 }) {
   )
 }
 
-// ── Timestamp helper ──────────────────────────────────────────────────────
+// Timestamp helper 
 function formatTime(date) {
   return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 }
 
-// ── Safety analysis logic ─────────────────────────────────────────────────
+//  Safety analysis logic 
 function analyzeInput(text) {
   const lower = text.toLowerCase().trim()
 
@@ -132,7 +132,7 @@ function analyzeInput(text) {
   return { riskLevel, riskLabel, riskColor, checklist, summary, urls, flags }
 }
 
-// ── Check result bubble ───────────────────────────────────────────────────
+// Check result bubble 
 function ChecklistBubble({ result }) {
   const failedItems = result.checklist.filter(i => !i.pass)
   const passedItems = result.checklist.filter(i => i.pass)
@@ -189,7 +189,7 @@ function ChecklistBubble({ result }) {
   )
 }
 
-// ── Message bubble ─────────────────────────────────────────────────────────
+// Message bubble 
 function Message({ msg }) {
   const isUser = msg.role === 'user'
   return (
@@ -209,7 +209,7 @@ function Message({ msg }) {
   )
 }
 
-// ── Typing indicator ──────────────────────────────────────────────────────
+// Typing indicator 
 function TypingIndicator() {
   return (
     <div className="message-row message-row--bot">
@@ -223,7 +223,7 @@ function TypingIndicator() {
   )
 }
 
-// ── Main App ──────────────────────────────────────────────────────────────
+//  Main App 
 const WELCOME_MESSAGES = [
   {
     id: 'w1',
