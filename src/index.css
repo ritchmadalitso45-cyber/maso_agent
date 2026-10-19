@@ -1,0 +1,58 @@
+/* ── Base reset & layout ──────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+:root {
+  --purple:       #7c3aed;
+  --purple-dark:  #6d28d9;
+  --purple-light: #f0effe;
+  --bg-page:      #e8e6f5;
+
+  --sans: 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
+
+  font-family: var(--sans);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--bg-page);
+
+  /* Subtle radial glow behind the phone */
+  background-image:
+    radial-gradient(ellipse at 50% 30%, rgba(124, 58, 237, 0.18) 0%, transparent 65%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 16px;
+}
+
+#root {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Typography resets (don't bleed into chat bubble styles) ── */
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+}
+
+p {
+  margin: 0;
+}
+
+button {
+  font-family: inherit;
+}
+
+textarea {
+  font-family: inherit;
+}
